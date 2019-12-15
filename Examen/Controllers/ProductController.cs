@@ -10,23 +10,23 @@ using Examen.Models;
 
 namespace Examen.Controllers
 {
-    public class SubcategoryController : Controller
+    public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public SubcategoryController(ApplicationDbContext context)
+        public ProductController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Subcategory
+        // GET: Product
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Subcategory.Include(s => s.Category);
+            var applicationDbContext = _context.Product.Include(p => p.Subcategory);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Subcategory/Details/5
+        // GET: Product/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,42 +34,42 @@ namespace Examen.Controllers
                 return NotFound();
             }
 
-            var subcategory = await _context.Subcategory
-                .Include(s => s.Category)
+            var product = await _context.Product
+                .Include(p => p.Subcategory)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (subcategory == null)
+            if (product == null)
             {
                 return NotFound();
             }
 
-            return View(subcategory);
+            return View(product);
         }
 
-        // GET: Subcategory/Create
+        // GET: Product/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name");
+            ViewData["SubcategoryId"] = new SelectList(_context.Subcategory, "Id", "Name");
             return View();
         }
 
-        // POST: Subcategory/Create
+        // POST: Product/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,CategoryId")] Subcategory subcategory)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,SubcategoryId")] Product product)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(subcategory);
+                _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", subcategory.CategoryId);
-            return View(subcategory);
+            ViewData["SubcategoryId"] = new SelectList(_context.Subcategory, "Id", "Name", product.SubcategoryId);
+            return View(product);
         }
 
-        // GET: Subcategory/Edit/5
+        // GET: Product/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,23 +77,23 @@ namespace Examen.Controllers
                 return NotFound();
             }
 
-            var subcategory = await _context.Subcategory.FindAsync(id);
-            if (subcategory == null)
+            var product = await _context.Product.FindAsync(id);
+            if (product == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", subcategory.CategoryId);
-            return View(subcategory);
+            ViewData["SubcategoryId"] = new SelectList(_context.Subcategory, "Id", "Name", product.SubcategoryId);
+            return View(product);
         }
 
-        // POST: Subcategory/Edit/5
+        // POST: Product/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,CategoryId")] Subcategory subcategory)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,SubcategoryId")] Product product)
         {
-            if (id != subcategory.Id)
+            if (id != product.Id)
             {
                 return NotFound();
             }
@@ -102,12 +102,12 @@ namespace Examen.Controllers
             {
                 try
                 {
-                    _context.Update(subcategory);
+                    _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SubcategoryExists(subcategory.Id))
+                    if (!ProductExists(product.Id))
                     {
                         return NotFound();
                     }
@@ -118,11 +118,11 @@ namespace Examen.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name", subcategory.CategoryId);
-            return View(subcategory);
+            ViewData["SubcategoryId"] = new SelectList(_context.Subcategory, "Id", "Name", product.SubcategoryId);
+            return View(product);
         }
 
-        // GET: Subcategory/Delete/5
+        // GET: Product/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -130,31 +130,31 @@ namespace Examen.Controllers
                 return NotFound();
             }
 
-            var subcategory = await _context.Subcategory
-                .Include(s => s.Category)
+            var product = await _context.Product
+                .Include(p => p.Subcategory)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (subcategory == null)
+            if (product == null)
             {
                 return NotFound();
             }
 
-            return View(subcategory);
+            return View(product);
         }
 
-        // POST: Subcategory/Delete/5
+        // POST: Product/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var subcategory = await _context.Subcategory.FindAsync(id);
-            _context.Subcategory.Remove(subcategory);
+            var product = await _context.Product.FindAsync(id);
+            _context.Product.Remove(product);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SubcategoryExists(int id)
+        private bool ProductExists(int id)
         {
-            return _context.Subcategory.Any(e => e.Id == id);
+            return _context.Product.Any(e => e.Id == id);
         }
     }
 }
