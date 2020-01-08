@@ -7,19 +7,57 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Examen.Data.Migrations
+namespace Examen.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191215164901_productsprijs")]
-    partial class productsprijs
+    [Migration("20200107152549_reserveringendingen")]
+    partial class reserveringendingen
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Examen.Models.Bestelling", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ReserveringId");
+
+                    b.Property<int>("Tafel");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReserveringId");
+
+                    b.ToTable("Bestelling");
+                });
+
+            modelBuilder.Entity("Examen.Models.Bestelregel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Aantal");
+
+                    b.Property<int>("BestellingId");
+
+                    b.Property<int>("ProductId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BestellingId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Bestelregel");
+                });
 
             modelBuilder.Entity("Examen.Models.Category", b =>
                 {
@@ -42,8 +80,7 @@ namespace Examen.Data.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(5,2)");
+                    b.Property<decimal>("Price");
 
                     b.Property<int>("SubcategoryId");
 
@@ -52,6 +89,31 @@ namespace Examen.Data.Migrations
                     b.HasIndex("SubcategoryId");
 
                     b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("Examen.Models.Reservering", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AantalPersonen");
+
+                    b.Property<bool>("Betaald");
+
+                    b.Property<DateTime>("Datum");
+
+                    b.Property<bool>("Gebruikt");
+
+                    b.Property<string>("Klantnaam");
+
+                    b.Property<int>("Tafel");
+
+                    b.Property<string>("Telefoonnr");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Reservering");
                 });
 
             modelBuilder.Entity("Examen.Models.Subcategory", b =>
@@ -236,6 +298,27 @@ namespace Examen.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Examen.Models.Bestelling", b =>
+                {
+                    b.HasOne("Examen.Models.Reservering", "Reservering")
+                        .WithMany()
+                        .HasForeignKey("ReserveringId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Examen.Models.Bestelregel", b =>
+                {
+                    b.HasOne("Examen.Models.Bestelling", "Bestelling")
+                        .WithMany("Bestelregel")
+                        .HasForeignKey("BestellingId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Examen.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Examen.Models.Product", b =>
                 {
                     b.HasOne("Examen.Models.Subcategory", "Subcategory")
@@ -247,7 +330,7 @@ namespace Examen.Data.Migrations
             modelBuilder.Entity("Examen.Models.Subcategory", b =>
                 {
                     b.HasOne("Examen.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("Subcategory")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

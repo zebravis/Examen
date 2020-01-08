@@ -1,0 +1,100 @@
+﻿@model Examen.Models.Reservering
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Reservering</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Datum)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Datum)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Tafel)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Tafel)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Klantnaam)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Klantnaam)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Telefoonnr)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Telefoonnr)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AantalPersonen)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AantalPersonen)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Gebruikt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Gebruikt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Betaald)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Betaald)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@{ 
+    var parms = new Dictionary<string, string>
+    {
+        { "ReserveringId", Model.Id.ToString() }
+
+    };
+}
+
+<p>
+    <a asp-controller="Bestelling" asp-all-route-data="parms" asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Producten
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Bestellingen != null)
+        {
+        @foreach (var item in Model.Bestellingen)
+        {
+            <tr>
+                <td>
+                    @item.GenerateProductList()
+                </td>
+                <td>
+                    <a asp-controller="Bestelling" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-controller="Bestelling" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-controller="Bestelling" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+        }
+    </tbody>
+</table>

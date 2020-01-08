@@ -1,0 +1,87 @@
+﻿@model Examen.Models.Bestelling
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Bestelling</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Tafel)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Tafel)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Reservering)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Reservering.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@{
+    var parms = new Dictionary<string, string>
+{
+{ "BestellingId", Model.Id.ToString() }
+
+};
+}
+
+<p>
+    <a asp-controller="Bestelregel" asp-all-route-data="parms" asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Product
+            </th>
+            <th>
+                Prijs
+            </th>
+            <th>
+                Aantal
+            </th>
+            <th>
+                Totaal
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Bestelregel != null)
+        {
+            @foreach (var item in Model.Bestelregel)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Product.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Product.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Aantal)
+                    </td>
+                    <td>
+                        @(item.Product.Price  * item.Aantal)
+                    </td>
+                    <td>
+                        <a asp-controller="Bestelregel" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-controller="Bestelregel" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-controller="Bestelregel" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+</table>

@@ -17,5 +17,8 @@ namespace Examen.Data
         public DbSet<Category> Category { get; set; }
         public DbSet<Subcategory> Subcategory { get; set; }
         public DbSet<Product> Product { get; set; }
+        public DbSet<Reservering> Reservering { get; set; }
+        public DbSet<Bestelling> Bestelling { get; set; }
+        public DbSet<Examen.Models.Bestelregel> Bestelregel { get; set; }
     }
 }

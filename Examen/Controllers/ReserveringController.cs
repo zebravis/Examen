@@ -7,27 +7,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Examen.Data;
 using Examen.Models;
-using Examen.Models.ViewModels;
 
 namespace Examen.Controllers
 {
-    public class ProductController : Controller
+    public class ReserveringController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ProductController(ApplicationDbContext context)
+        public ReserveringController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Product
+        // GET: Reservering
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Product.Include(p => p.Subcategory).Include(p => p.Subcategory.Category);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.Reservering.ToListAsync());
         }
 
-        // GET: Product/Details/5
+        // GET: Reservering/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,47 +33,42 @@ namespace Examen.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
-                .Include(p => p.Subcategory)
+            var reservering = await _context.Reservering
+                .Include(p => p.Bestellingen)
+                .ThenInclude(p => p.Bestelregel)
+                .ThenInclude(p => p.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            if (reservering == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(reservering);
         }
 
-        // GET: Product/Create
+        // GET: Reservering/Create
         public IActionResult Create()
         {
-            var CreateProductViewModel = new CreateProductViewModel
-            {
-                SubcategoryList = _context.Subcategory.ToList(),
-                Product = new Product()
-            };
-            return View(CreateProductViewModel);
+            return View();
         }
 
-        // POST: Product/Create
+        // POST: Reservering/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateProductViewModel Model)
+        public async Task<IActionResult> Create([Bind("Id,Datum,Tafel,Klantnaam,Telefoonnr,AantalPersonen,Gebruikt,Betaald")] Reservering reservering)
         {
             if (ModelState.IsValid)
             {
-                Model.Product.SubcategoryId = Model.SubcategoryId;
-                _context.Add(Model.Product);
+                _context.Add(reservering);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["SubcategoryId"] = new SelectList(_context.Subcategory, "Id", "Name", Model.SubcategoryId);
-            return View(Model.Product);
+            return View(reservering);
         }
 
-        // GET: Product/Edit/5
+        // GET: Reservering/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -83,23 +76,22 @@ namespace Examen.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product.FindAsync(id);
-            if (product == null)
+            var reservering = await _context.Reservering.FindAsync(id);
+            if (reservering == null)
             {
                 return NotFound();
             }
-            ViewData["SubcategoryId"] = new SelectList(_context.Subcategory, "Id", "Name", product.SubcategoryId);
-            return View(product);
+            return View(reservering);
         }
 
-        // POST: Product/Edit/5
+        // POST: Reservering/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,SubcategoryId")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Datum,Tafel,Klantnaam,Telefoonnr,AantalPersonen,Gebruikt,Betaald")] Reservering reservering)
         {
-            if (id != product.Id)
+            if (id != reservering.Id)
             {
                 return NotFound();
             }
@@ -108,12 +100,12 @@ namespace Examen.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(reservering);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!ReserveringExists(reservering.Id))
                     {
                         return NotFound();
                     }
@@ -124,11 +116,10 @@ namespace Examen.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["SubcategoryId"] = new SelectList(_context.Subcategory, "Id", "Name", product.SubcategoryId);
-            return View(product);
+            return View(reservering);
         }
 
-        // GET: Product/Delete/5
+        // GET: Reservering/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,31 +127,30 @@ namespace Examen.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
-                .Include(p => p.Subcategory)
+            var reservering = await _context.Reservering
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            if (reservering == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(reservering);
         }
 
-        // POST: Product/Delete/5
+        // POST: Reservering/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Product.FindAsync(id);
-            _context.Product.Remove(product);
+            var reservering = await _context.Reservering.FindAsync(id);
+            _context.Reservering.Remove(reservering);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        private bool ReserveringExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            return _context.Reservering.Any(e => e.Id == id);
         }
     }
 }

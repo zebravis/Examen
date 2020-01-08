@@ -7,27 +7,26 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Examen.Data;
 using Examen.Models;
-using Examen.Models.ViewModels;
 
 namespace Examen.Controllers
 {
-    public class ProductController : Controller
+    public class BestelregelController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ProductController(ApplicationDbContext context)
+        public BestelregelController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Product
+        // GET: Bestelregel
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Product.Include(p => p.Subcategory).Include(p => p.Subcategory.Category);
+            var applicationDbContext = _context.Bestelregel.Include(b => b.Bestelling).Include(b => b.Product);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Product/Details/5
+        // GET: Bestelregel/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,47 +34,52 @@ namespace Examen.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
-                .Include(p => p.Subcategory)
+            var bestelregel = await _context.Bestelregel
+                .Include(b => b.Bestelling)
+                .Include(b => b.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            if (bestelregel == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(bestelregel);
         }
 
-        // GET: Product/Create
-        public IActionResult Create()
+        // GET: Bestelregel/Create
+        public IActionResult Create(string BestellingId)
         {
-            var CreateProductViewModel = new CreateProductViewModel
+
+            var bestelling = _context.Bestelling.Single(m => m.Id == int.Parse(BestellingId));
+
+            var bestelregel = new Bestelregel
             {
-                SubcategoryList = _context.Subcategory.ToList(),
-                Product = new Product()
+                Bestelling = bestelling,
+                BestellingId = int.Parse(BestellingId)
             };
-            return View(CreateProductViewModel);
+            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Name");
+            return View();
         }
 
-        // POST: Product/Create
+        // POST: Bestelregel/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateProductViewModel Model)
+        public async Task<IActionResult> Create([Bind("Id,BestellingId,ProductId,Aantal")] Bestelregel bestelregel)
         {
             if (ModelState.IsValid)
             {
-                Model.Product.SubcategoryId = Model.SubcategoryId;
-                _context.Add(Model.Product);
+                _context.Add(bestelregel);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Bestelling", new { Id = bestelregel.BestellingId });
+
             }
-            ViewData["SubcategoryId"] = new SelectList(_context.Subcategory, "Id", "Name", Model.SubcategoryId);
-            return View(Model.Product);
+
+            return BadRequest();
         }
 
-        // GET: Product/Edit/5
+        // GET: Bestelregel/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -83,23 +87,24 @@ namespace Examen.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product.FindAsync(id);
-            if (product == null)
+            var bestelregel = await _context.Bestelregel.FindAsync(id);
+            if (bestelregel == null)
             {
                 return NotFound();
             }
-            ViewData["SubcategoryId"] = new SelectList(_context.Subcategory, "Id", "Name", product.SubcategoryId);
-            return View(product);
+            ViewData["BestellingId"] = new SelectList(_context.Bestelling, "Id", "Name", bestelregel.BestellingId);
+            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Name", bestelregel.ProductId);
+            return View(bestelregel);
         }
 
-        // POST: Product/Edit/5
+        // POST: Bestelregel/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,SubcategoryId")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BestellingId,ProductId,Aantal")] Bestelregel bestelregel)
         {
-            if (id != product.Id)
+            if (id != bestelregel.Id)
             {
                 return NotFound();
             }
@@ -108,12 +113,12 @@ namespace Examen.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(bestelregel);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!BestelregelExists(bestelregel.Id))
                     {
                         return NotFound();
                     }
@@ -124,11 +129,12 @@ namespace Examen.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["SubcategoryId"] = new SelectList(_context.Subcategory, "Id", "Name", product.SubcategoryId);
-            return View(product);
+            ViewData["BestellingId"] = new SelectList(_context.Bestelling, "Id", "Name", bestelregel.BestellingId);
+            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Name", bestelregel.ProductId);
+            return View(bestelregel);
         }
 
-        // GET: Product/Delete/5
+        // GET: Bestelregel/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,31 +142,32 @@ namespace Examen.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
-                .Include(p => p.Subcategory)
+            var bestelregel = await _context.Bestelregel
+                .Include(b => b.Bestelling)
+                .Include(b => b.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            if (bestelregel == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(bestelregel);
         }
 
-        // POST: Product/Delete/5
+        // POST: Bestelregel/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Product.FindAsync(id);
-            _context.Product.Remove(product);
+            var bestelregel = await _context.Bestelregel.FindAsync(id);
+            _context.Bestelregel.Remove(bestelregel);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        private bool BestelregelExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            return _context.Bestelregel.Any(e => e.Id == id);
         }
     }
 }
