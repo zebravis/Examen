@@ -15,7 +15,7 @@ namespace Examen.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -68,6 +68,18 @@ namespace Examen.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Category");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Eten"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Drinken"
+                        });
                 });
 
             modelBuilder.Entity("Examen.Models.Product", b =>
@@ -87,6 +99,43 @@ namespace Examen.Migrations
                     b.HasIndex("SubcategoryId");
 
                     b.ToTable("Product");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Soep van de dag",
+                            Price = 7m,
+                            SubcategoryId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Rib-eye Steak",
+                            Price = 14m,
+                            SubcategoryId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Creme Brulee",
+                            Price = 9m,
+                            SubcategoryId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Cola",
+                            Price = 3m,
+                            SubcategoryId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Cappucino",
+                            Price = 3m,
+                            SubcategoryId = 5
+                        });
                 });
 
             modelBuilder.Entity("Examen.Models.Reservering", b =>
@@ -129,6 +178,38 @@ namespace Examen.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Subcategory");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryId = 1,
+                            Name = "Voorgerechten"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CategoryId = 1,
+                            Name = "Hoofdgerechten"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CategoryId = 1,
+                            Name = "Nagerechten"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CategoryId = 2,
+                            Name = "Koude dranken"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CategoryId = 2,
+                            Name = "Warme dranken"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -153,6 +234,22 @@ namespace Examen.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "95e442b3-046f-4278-b794-9714e12bbe3e",
+                            ConcurrencyStamp = "16fba9f7-39cf-4bac-8ab1-96d6ede54761",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "052e0b10-bfdc-4086-8294-cb5ddd62d5d0",
+                            ConcurrencyStamp = "cf4c7f44-cce9-44d8-b5fd-f35e1bb70199",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -224,6 +321,24 @@ namespace Examen.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "6244dd01-027c-4a35-af48-d7ec4829a5da",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "1cdfdfd7-adc7-443e-b196-bb7ad17823f3",
+                            Email = "tester@test.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "TESTER@TEST.COM",
+                            NormalizedUserName = "TESTER",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOZFawBYA9KPdjUL1TrVuTTt+8qlYnCT5D9cPMBSjy3MLcGA1vSL583yfd+FyBUPFA==",
+                            PhoneNumber = "123456789",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "tester"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -299,7 +414,7 @@ namespace Examen.Migrations
             modelBuilder.Entity("Examen.Models.Bestelling", b =>
                 {
                     b.HasOne("Examen.Models.Reservering", "Reservering")
-                        .WithMany()
+                        .WithMany("Bestellingen")
                         .HasForeignKey("ReserveringId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

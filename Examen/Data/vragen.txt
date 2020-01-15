@@ -1,0 +1,2 @@
+﻿Hoe Seed ik IdentityUserRoles
+Hoe werkt dat stukje met die parms (Bestelling -> Details)
