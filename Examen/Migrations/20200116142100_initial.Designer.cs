@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Examen.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200107152549_reserveringendingen")]
-    partial class reserveringendingen
+    [Migration("20200116142100_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -70,6 +70,18 @@ namespace Examen.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Category");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Eten"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Drinken"
+                        });
                 });
 
             modelBuilder.Entity("Examen.Models.Product", b =>
@@ -89,6 +101,43 @@ namespace Examen.Migrations
                     b.HasIndex("SubcategoryId");
 
                     b.ToTable("Product");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Soep van de dag",
+                            Price = 7m,
+                            SubcategoryId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Rib-eye Steak",
+                            Price = 14m,
+                            SubcategoryId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Creme Brulee",
+                            Price = 9m,
+                            SubcategoryId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Cola",
+                            Price = 3m,
+                            SubcategoryId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Cappucino",
+                            Price = 3m,
+                            SubcategoryId = 5
+                        });
                 });
 
             modelBuilder.Entity("Examen.Models.Reservering", b =>
@@ -131,6 +180,38 @@ namespace Examen.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Subcategory");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryId = 1,
+                            Name = "Voorgerechten"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CategoryId = 1,
+                            Name = "Hoofdgerechten"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CategoryId = 1,
+                            Name = "Nagerechten"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CategoryId = 2,
+                            Name = "Koude dranken"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CategoryId = 2,
+                            Name = "Warme dranken"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -155,6 +236,22 @@ namespace Examen.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            ConcurrencyStamp = "10ffd7e5-2db8-4d92-a05f-062bb880b2c8",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            ConcurrencyStamp = "723db694-b78a-4cd6-97a0-558ef37b1315",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -226,6 +323,42 @@ namespace Examen.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "d639fc40-f36b-4ef7-9232-700a7a8c1dd1",
+                            Email = "admin@test.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@TEST.COM",
+                            NormalizedUserName = "ADMIN@TEST.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBKwN2DUUPLxVShtoZoJ24md6uBKDZLWNt6StXCsvR1JG0nMv2Vfd/ZVLCkVuBg0IQ==",
+                            PhoneNumber = "123456789",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "dab",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@test.com"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "89f11408-edf4-431a-91be-5963d16e7ed2",
+                            Email = "user@test.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER@TEST.COM",
+                            NormalizedUserName = "USER@TEST.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKjpFxx7rnpWwbrMl5vh83kV1uN+69ChlOd3NWgfB/rFTs0HZhSeSHpkj64TpSxzfw==",
+                            PhoneNumber = "123456789",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "dab",
+                            TwoFactorEnabled = false,
+                            UserName = "user@test.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -279,6 +412,18 @@ namespace Examen.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "1"
+                        },
+                        new
+                        {
+                            UserId = "2",
+                            RoleId = "2"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -301,7 +446,7 @@ namespace Examen.Migrations
             modelBuilder.Entity("Examen.Models.Bestelling", b =>
                 {
                     b.HasOne("Examen.Models.Reservering", "Reservering")
-                        .WithMany()
+                        .WithMany("Bestellingen")
                         .HasForeignKey("ReserveringId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

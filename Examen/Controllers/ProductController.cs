@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Examen.Data;
 using Examen.Models;
 using Examen.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Examen.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;

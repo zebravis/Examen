@@ -46,6 +46,37 @@ namespace Examen.Controllers
             return View(reservering);
         }
 
+
+        [HttpPut]
+        public IActionResult Betaald(int id)
+        {
+            var reservering = _context.Reservering.SingleOrDefault(r => r.Id == id);
+
+            if (reservering == null)
+            {
+                return BadRequest();
+            }
+            reservering.Betaald = !reservering.Betaald;
+            _context.SaveChanges();
+
+            return View("Details", reservering);
+        }
+
+        [HttpPut]
+        public IActionResult Gebruikt(int id)
+        {
+            var reservering = _context.Reservering.SingleOrDefault(r => r.Id == id );
+
+            if (reservering == null)
+            {
+                return BadRequest();
+            }
+            reservering.Gebruikt = !reservering.Gebruikt;
+            _context.SaveChanges();
+
+            return View("Details", reservering);
+        }
+
         // GET: Reservering/Create
         public IActionResult Create()
         {

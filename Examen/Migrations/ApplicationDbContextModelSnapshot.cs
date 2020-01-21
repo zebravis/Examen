@@ -15,7 +15,7 @@ namespace Examen.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -238,15 +238,15 @@ namespace Examen.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "95e442b3-046f-4278-b794-9714e12bbe3e",
-                            ConcurrencyStamp = "16fba9f7-39cf-4bac-8ab1-96d6ede54761",
+                            Id = "1",
+                            ConcurrencyStamp = "10ffd7e5-2db8-4d92-a05f-062bb880b2c8",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "052e0b10-bfdc-4086-8294-cb5ddd62d5d0",
-                            ConcurrencyStamp = "cf4c7f44-cce9-44d8-b5fd-f35e1bb70199",
+                            Id = "2",
+                            ConcurrencyStamp = "723db694-b78a-4cd6-97a0-558ef37b1315",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -325,19 +325,37 @@ namespace Examen.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6244dd01-027c-4a35-af48-d7ec4829a5da",
+                            Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1cdfdfd7-adc7-443e-b196-bb7ad17823f3",
-                            Email = "tester@test.com",
+                            ConcurrencyStamp = "d639fc40-f36b-4ef7-9232-700a7a8c1dd1",
+                            Email = "admin@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "TESTER@TEST.COM",
-                            NormalizedUserName = "TESTER",
-                            PasswordHash = "AQAAAAEAACcQAAAAEOZFawBYA9KPdjUL1TrVuTTt+8qlYnCT5D9cPMBSjy3MLcGA1vSL583yfd+FyBUPFA==",
+                            NormalizedEmail = "ADMIN@TEST.COM",
+                            NormalizedUserName = "ADMIN@TEST.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBKwN2DUUPLxVShtoZoJ24md6uBKDZLWNt6StXCsvR1JG0nMv2Vfd/ZVLCkVuBg0IQ==",
                             PhoneNumber = "123456789",
                             PhoneNumberConfirmed = false,
+                            SecurityStamp = "dab",
                             TwoFactorEnabled = false,
-                            UserName = "tester"
+                            UserName = "admin@test.com"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "89f11408-edf4-431a-91be-5963d16e7ed2",
+                            Email = "user@test.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER@TEST.COM",
+                            NormalizedUserName = "USER@TEST.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKjpFxx7rnpWwbrMl5vh83kV1uN+69ChlOd3NWgfB/rFTs0HZhSeSHpkj64TpSxzfw==",
+                            PhoneNumber = "123456789",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "dab",
+                            TwoFactorEnabled = false,
+                            UserName = "user@test.com"
                         });
                 });
 
@@ -392,6 +410,18 @@ namespace Examen.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "1"
+                        },
+                        new
+                        {
+                            UserId = "2",
+                            RoleId = "2"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

@@ -27,55 +27,81 @@ namespace Examen.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            IdentityUser admin = new IdentityUser
+            var adminrole = new IdentityRole
             {
+                Id = "1",
+                Name = "Admin",
+                NormalizedName = "ADMIN"
+            };
+
+            var userrole = new IdentityRole
+            {
+                Id = "2",
+                Name = "User",
+                NormalizedName = "USER"
+            };
+
+
+            var admin = new IdentityUser
+            { 
+                Id = "1",
                 UserName = "admin@test.com",
                 Email = "admin@test.com",
-                NormalizedEmail = "tester@test.com".ToUpper(),
-                NormalizedUserName = "tester".ToUpper(),
+                NormalizedEmail = "admin@test.com".ToUpper(),
+                NormalizedUserName = "admin@test.com".ToUpper(),
                 TwoFactorEnabled = false,
                 EmailConfirmed = true,
                 PhoneNumber = "123456789",
-                PhoneNumberConfirmed = false
+                PhoneNumberConfirmed = false,
+                SecurityStamp = "dab"
             };
 
             PasswordHasher<IdentityUser> ph1 = new PasswordHasher<IdentityUser>();
             admin.PasswordHash = ph1.HashPassword(admin, "Test123$");
 
-            IdentityUser user = new IdentityUser
+            var user = new IdentityUser
             {
+                Id = "2",
                 UserName = "user@test.com",
                 Email = "user@test.com",
                 NormalizedEmail = "user@test.com".ToUpper(),
-                NormalizedUserName = "user".ToUpper(),
+                NormalizedUserName = "user@test.com".ToUpper(),
                 TwoFactorEnabled = false,
                 EmailConfirmed = true,
                 PhoneNumber = "123456789",
-                PhoneNumberConfirmed = false
+                PhoneNumberConfirmed = false,
+                SecurityStamp = "dab"
             };
 
             PasswordHasher<IdentityUser> ph2 = new PasswordHasher<IdentityUser>();
             user.PasswordHash = ph2.HashPassword(user, "Test123$");
 
+            var adminuserrole = new IdentityUserRole<string>
+            {
+                RoleId = "1",
+                UserId = "1"
+            };
 
+            var useruserrole = new IdentityUserRole<string>
+            {
+                RoleId = "2",
+                UserId = "2"
+            };
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                adminrole,
+                userrole
+                );
+        
             modelBuilder.Entity<IdentityUser>().HasData(
                 admin,
                 user
-            );
+                );
 
-            modelBuilder.Entity<IdentityRole>().HasData(
-                new IdentityRole
-                {
-                    Name = "Admin",
-                    NormalizedName = "ADMIN"
-                },
-                new IdentityRole
-                {
-                    Name = "User",
-                    NormalizedName = "USER"
-                }
-            );
-
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                adminuserrole,
+                useruserrole
+                );
 
             modelBuilder.Entity<Category>().HasData(
                 new Category

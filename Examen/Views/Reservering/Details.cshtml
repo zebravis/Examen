@@ -44,14 +44,15 @@
             @Html.DisplayNameFor(model => model.Gebruikt)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Gebruikt)
+            <input class="form-check-input" id="gebruikt" asp-for="Gebruikt" />
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Betaald)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Betaald)
+            <input class="form-check-input" id="betaald" asp-for="Betaald" />
         </dd>
+        @Html.HiddenFor(model => model.Id)
     </dl>
 </div>
 <div>
@@ -59,16 +60,16 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@{ 
+@{
     var parms = new Dictionary<string, string>
-    {
-        { "ReserveringId", Model.Id.ToString() }
+{
+{ "ReserveringId", Model.Id.ToString() }
 
-    };
+};
 }
 
 <p>
-    <a asp-controller="Bestelling" asp-all-route-data="parms" asp-action="Create">Create New</a>
+    <a asp-controller="Bestelling" asp-all-route-data="parms" asp-action="Create">Maak nieuwe bestelling</a>
 </p>
 <table class="table">
     <thead>
@@ -82,19 +83,120 @@
     <tbody>
         @if (Model.Bestellingen != null)
         {
-        @foreach (var item in Model.Bestellingen)
-        {
-            <tr>
-                <td>
-                    @item.GenerateProductList()
-                </td>
-                <td>
-                    <a asp-controller="Bestelling" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-controller="Bestelling" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-controller="Bestelling" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
+            @foreach (var item in Model.Bestellingen)
+            {
+                <tr>
+                    <td>
+                        @item.GenerateProductList()
+                    </td>
+                    <td>
+                        <!--<a asp-controller="Bestelling" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |-->
+                        <a asp-controller="Bestelling" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-controller="Bestelling" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
+@{decimal sum = 0; }
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Producten
+            </th>
+            <th>Prijs</th>
+            <th>
+                Aantal
+            </th>
+            <th>
+                Regeltotaal
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Bestellingen != null)
+        {
+            @foreach (var item in Model.Bestellingen)
+            {
+                @foreach (var items in item.Bestelregel)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => items.Product.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => items.Product.Price)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => items.Aantal)
+                        </td>
+                        <td>
+                            @(items.Product.Price * items.Aantal)
+                        </td>
+                    </tr>
+                    {
+                        decimal regel = (items.Product.Price * items.Aantal);
+
+                        sum += regel;
+                    }
+                }
+            }
+        }
+    </tbody>
+</table>
+
+<p>Totaal: @sum</p>
+
+
+@section Scripts {
+    <script>
+        $('#betaald').click(function() {
+            var code = $("#Id").val();
+            $.ajax({
+                url: "@Url.Action("Betaald", "Reservering")",
+                type: 'PUT',
+                contentType: 'application/json; charset=utf-8',
+                data: {
+                    'id': code
+                },
+                success: ajaxSuccess,
+                error: ajaxFailed,
+            });
+            return false;
+        });
+
+        $('#gebruikt').click(function() {
+            var code = $("#Id").val();
+            $.ajax({
+                url: "@Url.Action("Gebruikt", "Reservering", new { id = Model.Id })",
+                type: 'PUT',
+                success: ajaxSuccess,
+                error: ajaxFailed,
+            });
+            return false;
+        });
+
+        function ajaxGebruikt() {
+            if ($('#gebruikt').is(":checked"))
+            {
+                $('#gebruikt').prop("checked", false);
+            } else
+            {
+                $('#gebruikt').prop("checked", true);
+            }
+        }
+
+        function ajaxBetaald() {
+            if ($('#betaald').is(":checked"))
+            {
+                $('#betaald').prop("checked", false);
+            } else
+            {
+                $('#betaald').prop("checked", true);
+            }
+        }
+
+    </script>
+}

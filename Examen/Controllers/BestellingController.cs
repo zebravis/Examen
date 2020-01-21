@@ -50,8 +50,6 @@ namespace Examen.Controllers
         // GET: Bestelling/Create
         public IActionResult Create(string ReserveringId)
         {
-            
-
             var reservering = _context.Reservering.Single(m => m.Id == int.Parse(ReserveringId));
 
             var bestelling = new Bestelling

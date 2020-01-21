@@ -61,6 +61,25 @@ namespace Examen.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Reservering",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Datum = table.Column<DateTime>(nullable: false),
+                    Tafel = table.Column<int>(nullable: false),
+                    Klantnaam = table.Column<string>(nullable: true),
+                    Telefoonnr = table.Column<string>(nullable: true),
+                    AantalPersonen = table.Column<int>(nullable: false),
+                    Gebruikt = table.Column<bool>(nullable: false),
+                    Betaald = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reservering", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -187,6 +206,26 @@ namespace Examen.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Bestelling",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Tafel = table.Column<int>(nullable: false),
+                    ReserveringId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bestelling", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bestelling_Reservering_ReserveringId",
+                        column: x => x.ReserveringId,
+                        principalTable: "Reservering",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Product",
                 columns: table => new
                 {
@@ -205,6 +244,93 @@ namespace Examen.Migrations
                         principalTable: "Subcategory",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bestelregel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    BestellingId = table.Column<int>(nullable: false),
+                    ProductId = table.Column<int>(nullable: false),
+                    Aantal = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bestelregel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bestelregel_Bestelling_BestellingId",
+                        column: x => x.BestellingId,
+                        principalTable: "Bestelling",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Bestelregel_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Product",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "1", "10ffd7e5-2db8-4d92-a05f-062bb880b2c8", "Admin", "ADMIN" },
+                    { "2", "723db694-b78a-4cd6-97a0-558ef37b1315", "User", "USER" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { "1", 0, "d639fc40-f36b-4ef7-9232-700a7a8c1dd1", "admin@test.com", true, false, null, "ADMIN@TEST.COM", "ADMIN@TEST.COM", "AQAAAAEAACcQAAAAEBKwN2DUUPLxVShtoZoJ24md6uBKDZLWNt6StXCsvR1JG0nMv2Vfd/ZVLCkVuBg0IQ==", "123456789", false, "dab", false, "admin@test.com" },
+                    { "2", 0, "89f11408-edf4-431a-91be-5963d16e7ed2", "user@test.com", true, false, null, "USER@TEST.COM", "USER@TEST.COM", "AQAAAAEAACcQAAAAEKjpFxx7rnpWwbrMl5vh83kV1uN+69ChlOd3NWgfB/rFTs0HZhSeSHpkj64TpSxzfw==", "123456789", false, "dab", false, "user@test.com" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Category",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Eten" },
+                    { 2, "Drinken" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "UserId", "RoleId" },
+                values: new object[,]
+                {
+                    { "1", "1" },
+                    { "2", "2" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Subcategory",
+                columns: new[] { "Id", "CategoryId", "Name" },
+                values: new object[,]
+                {
+                    { 1, 1, "Voorgerechten" },
+                    { 2, 1, "Hoofdgerechten" },
+                    { 3, 1, "Nagerechten" },
+                    { 4, 2, "Koude dranken" },
+                    { 5, 2, "Warme dranken" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Product",
+                columns: new[] { "Id", "Name", "Price", "SubcategoryId" },
+                values: new object[,]
+                {
+                    { 1, "Soep van de dag", 7m, 1 },
+                    { 2, "Rib-eye Steak", 14m, 2 },
+                    { 3, "Creme Brulee", 9m, 3 },
+                    { 4, "Cola", 3m, 4 },
+                    { 5, "Cappucino", 3m, 5 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -247,6 +373,21 @@ namespace Examen.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bestelling_ReserveringId",
+                table: "Bestelling",
+                column: "ReserveringId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bestelregel_BestellingId",
+                table: "Bestelregel",
+                column: "BestellingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bestelregel_ProductId",
+                table: "Bestelregel",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Product_SubcategoryId",
                 table: "Product",
                 column: "SubcategoryId");
@@ -275,13 +416,22 @@ namespace Examen.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "Bestelregel");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Bestelling");
+
+            migrationBuilder.DropTable(
+                name: "Product");
+
+            migrationBuilder.DropTable(
+                name: "Reservering");
 
             migrationBuilder.DropTable(
                 name: "Subcategory");
